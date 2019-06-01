@@ -14,7 +14,14 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class Departament {
+public class User extends ModelBase {
 
     private String name;
+    private String department;
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
 }

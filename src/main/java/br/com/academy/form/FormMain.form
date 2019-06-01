@@ -156,11 +156,9 @@
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
             <Component class="javax.swing.JTree" name="jTree1">
-              <Properties>
-                <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.editors2.TreeModelEditor">
-                  <TreeModel code="Departamentos&#xa; Financeiro&#xa;  Anderson&#xa;  Josimar&#xa; TI&#xa;  Osenias&#xa;  Lucas&#xa; Compras&#xa;  Braga&#xa;  Gisele"/>
-                </Property>
-              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTree1MouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

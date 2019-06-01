@@ -5,17 +5,51 @@
  */
 package br.com.academy.form;
 
+import br.com.academy.model.Department;
+import br.com.academy.model.User;
+import br.com.academy.repository.implementation.DepartmentRepository;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+
 /**
  *
  * @author ozzy
  */
 public class FormMain extends javax.swing.JFrame {
 
+    private List<Department> departments;
+
     /**
      * Creates new form FormMain
      */
     public FormMain() {
         initComponents();
+        this.populateTree();
+    }
+
+    private void populateTree() {
+        departments = DepartmentRepository.getInstance().list();
+
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Departamentos");
+        DefaultTreeModel treeModel = new DefaultTreeModel(root);
+
+        departments.forEach(d -> {
+            DefaultMutableTreeNode departmentsNode = new DefaultMutableTreeNode(d.getName());
+            departmentsNode.setUserObject(d);
+            root.add(departmentsNode);
+
+            d.getUsers().forEach(u -> {
+                DefaultMutableTreeNode usersNode = new DefaultMutableTreeNode(u.getName());
+                usersNode.setUserObject(u);
+                departmentsNode.add(usersNode);
+            });
+
+        });
+        jTree1.setModel(treeModel);
+        jTree1.setRowHeight(20);
     }
 
     /**
@@ -64,26 +98,11 @@ public class FormMain extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Usuários"));
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Departamentos");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Financeiro");
-        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Anderson");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Josimar");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("TI");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Osenias");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Lucas");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Compras");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Braga");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("Gisele");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jTree1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTree1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTree1);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -147,40 +166,22 @@ public class FormMain extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FormMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FormMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FormMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FormMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void jTree1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTree1MouseClicked
+        if (evt.getClickCount() > 1) {
+            TreePath selectionPath = jTree1.getSelectionPath();
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FormMain().setVisible(true);
+            System.out.println("selectionPath: " + selectionPath);
+
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
+            try {
+                User selectedUser = (User) node.getUserObject();
+                System.out.println(selectedUser);
+            } catch (ClassCastException e) {
+                JOptionPane.showMessageDialog(this, "Item não selecionável para um chat");
             }
-        });
-    }
+        }
+    }//GEN-LAST:event_jTree1MouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;

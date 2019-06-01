@@ -11,7 +11,7 @@ package br.com.academy.repository.settings;
  */
 public class ApiUrls {
 
-    public static final String DEPARTAMENT = "departament/";
+    public static final String DEPARTAMENT = "department/";
     public static final String USER = "user/";
 
 }
