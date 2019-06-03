@@ -19,6 +19,7 @@ import lombok.Setter;
 @Setter
 public class ModelBase implements Serializable {
 
+    private String url;
     private Integer id;
     @SerializedName("created_at")
     private Date createdAt;
