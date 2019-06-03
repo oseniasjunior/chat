@@ -20,8 +20,8 @@ public class DepartmentRepository extends Repository {
         return instance;
     }
 
-    public List<Department> list() {
-        Call<List<Department>> call = this.repository.list();
+    public List<Department> list(Integer user) {
+        Call<List<Department>> call = this.repository.list(user);
         return super.getEntityList(call);
     }
 

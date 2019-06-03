@@ -8,6 +8,7 @@ package br.com.academy.form;
 import br.com.academy.model.Department;
 import br.com.academy.model.User;
 import br.com.academy.repository.implementation.DepartmentRepository;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -21,17 +22,16 @@ import javax.swing.tree.TreePath;
 public class FormMain extends javax.swing.JFrame {
 
     private List<Department> departments;
+    private final User loggedUser;
 
-    /**
-     * Creates new form FormMain
-     */
-    public FormMain() {
+    public FormMain(User loggedUser) {
+        this.loggedUser = loggedUser;
         initComponents();
         this.populateTree();
     }
 
     private void populateTree() {
-        departments = DepartmentRepository.getInstance().list();
+        departments = DepartmentRepository.getInstance().list(this.loggedUser.getId());
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Departamentos");
         DefaultTreeModel treeModel = new DefaultTreeModel(root);
@@ -42,7 +42,7 @@ public class FormMain extends javax.swing.JFrame {
             root.add(departmentsNode);
 
             d.getUsers().forEach(u -> {
-                DefaultMutableTreeNode usersNode = new DefaultMutableTreeNode(u.getName());
+                DefaultMutableTreeNode usersNode = new DefaultMutableTreeNode(u.getUsername());
                 usersNode.setUserObject(u);
                 departmentsNode.add(usersNode);
             });
@@ -175,7 +175,12 @@ public class FormMain extends javax.swing.JFrame {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
             try {
                 User selectedUser = (User) node.getUserObject();
-                System.out.println(selectedUser);
+                
+                List<String> users = Arrays.asList(this.loggedUser.getUrl(), selectedUser.getUrl());
+                
+                new FormChat().setVisible(true);
+                this.dispose();
+
             } catch (ClassCastException e) {
                 JOptionPane.showMessageDialog(this, "Item não selecionável para um chat");
             }

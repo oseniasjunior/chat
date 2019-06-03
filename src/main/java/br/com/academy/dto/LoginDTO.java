@@ -3,18 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.academy.app;
+package br.com.academy.dto;
 
-import br.com.academy.form.FormLogin;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
  * @author ozzy
  */
-public class Main {
+@Setter
+@Getter
+public class LoginDTO {
 
-    public static void main(String[] args) {
-        new FormLogin().setVisible(true);
-    }
+    private String username;
+    private String password;
 
 }

@@ -16,12 +16,12 @@ import lombok.Setter;
 @Setter
 public class User extends ModelBase {
 
-    private String name;
+    private String username;
     private String department;
 
     @Override
     public String toString() {
-        return this.name;
+        return this.username;
     }
 
 }
