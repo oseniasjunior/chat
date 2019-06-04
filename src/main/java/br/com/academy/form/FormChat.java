@@ -31,7 +31,7 @@ public class FormChat extends javax.swing.JFrame {
         edtChat = new javax.swing.JTextArea();
         edtMessage = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         edtChat.setColumns(20);
         edtChat.setRows(5);

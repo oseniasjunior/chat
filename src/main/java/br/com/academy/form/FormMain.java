@@ -5,8 +5,11 @@
  */
 package br.com.academy.form;
 
+import br.com.academy.dto.CreateChatDTO;
+import br.com.academy.model.Chat;
 import br.com.academy.model.Department;
 import br.com.academy.model.User;
+import br.com.academy.repository.implementation.ChatRepository;
 import br.com.academy.repository.implementation.DepartmentRepository;
 import java.util.Arrays;
 import java.util.List;
@@ -75,7 +78,7 @@ public class FormMain extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenuItem4 = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Buscar usuário por nome ou departamento"));
 
@@ -170,16 +173,15 @@ public class FormMain extends javax.swing.JFrame {
         if (evt.getClickCount() > 1) {
             TreePath selectionPath = jTree1.getSelectionPath();
 
-            System.out.println("selectionPath: " + selectionPath);
-
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
             try {
                 User selectedUser = (User) node.getUserObject();
-                
+
                 List<String> users = Arrays.asList(this.loggedUser.getUrl(), selectedUser.getUrl());
-                
+
+                Chat chat = ChatRepository.getInstance().getOrCreate(new CreateChatDTO(users));
+
                 new FormChat().setVisible(true);
-                this.dispose();
 
             } catch (ClassCastException e) {
                 JOptionPane.showMessageDialog(this, "Item não selecionável para um chat");

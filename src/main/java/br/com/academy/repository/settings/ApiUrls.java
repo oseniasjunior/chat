@@ -14,5 +14,6 @@ public class ApiUrls {
     public static final String DEPARTAMENT = "department/";
     public static final String USER = "user/";
     public static final String TOKEN = "get_token/";
+    public static final String CHAT = "chat/";
 
 }
