@@ -5,17 +5,69 @@
  */
 package br.com.academy.form;
 
+import br.com.academy.configuration.Configurations;
+import br.com.academy.configuration.WebsocketUrls;
+import br.com.academy.dto.Content;
+import br.com.academy.helpers.GenericWebsocket;
+import br.com.academy.model.Chat;
+import br.com.academy.model.ChatMessage;
+import br.com.academy.model.User;
+import br.com.academy.repository.implementation.ChatMessageRepository;
+import com.google.gson.Gson;
+import java.awt.event.KeyEvent;
+import java.net.URISyntaxException;
+import java.text.MessageFormat;
+import java.util.List;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author ozzy
  */
 public class FormChat extends javax.swing.JFrame {
 
-    /**
-     * Creates new form FormChat
-     */
-    public FormChat() {
+    private final Chat chat;
+    private final User loggedUser;
+    private GenericWebsocket genericWebsocket;
+
+    public FormChat(Chat chat, User loggedUser) {
         initComponents();
+        this.chat = chat;
+        this.loggedUser = loggedUser;
+        this.openWsConnection();
+        this.loadOldMessages();
+    }
+
+    private void loadOldMessages() {
+        List<ChatMessage> messages = ChatMessageRepository.getInstance().list(this.chat.getId());
+        messages.forEach(m -> {
+            edtChat.append("Usuário: " + m.getUsername());
+            edtChat.append("\n");
+            edtChat.append(m.getMessage());
+            edtChat.append("\n\n");
+        });
+    }
+
+    private void openWsConnection() {
+        String fullUrl = MessageFormat.format("{0}{1}?chat={2}",
+                Configurations.WEBSOCKER_SERVER,
+                WebsocketUrls.CONVERSATION,
+                this.chat.getId()
+        );
+        try {
+            genericWebsocket = new GenericWebsocket(fullUrl);
+            genericWebsocket.setOnTextReceivedAction((message) -> {
+                Gson gson = new Gson();
+                Content content = gson.fromJson(message, Content.class);
+                edtChat.append("Usuário: " + content.getUsername());
+                edtChat.append("\n");
+                edtChat.append(content.getMessage());
+                edtChat.append("\n\n");
+            });
+            genericWebsocket.connect();
+        } catch (URISyntaxException ex) {
+            JOptionPane.showMessageDialog(this, "Não foi possível conectar com o WS");
+        }
     }
 
     /**
@@ -32,6 +84,11 @@ public class FormChat extends javax.swing.JFrame {
         edtMessage = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         edtChat.setColumns(20);
         edtChat.setRows(5);
@@ -44,6 +101,11 @@ public class FormChat extends javax.swing.JFrame {
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 edtMessageFocusLost(evt);
+            }
+        });
+        edtMessage.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                edtMessageKeyPressed(evt);
             }
         });
 
@@ -79,40 +141,25 @@ public class FormChat extends javax.swing.JFrame {
         this.edtMessage.setText("Digite sua mensagem aqui...");
     }//GEN-LAST:event_edtMessageFocusLost
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FormChat.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FormChat.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FormChat.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FormChat.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void edtMessageKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edtMessageKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FormChat().setVisible(true);
-            }
-        });
-    }
+            Content content = new Content();
+            content.setUsername(this.loggedUser.getUsername());
+            content.setMessage(this.edtMessage.getText());
+
+            Gson gson = new Gson();
+
+            genericWebsocket.send(gson.toJson(content));
+
+            this.edtMessage.setText("");
+        }
+    }//GEN-LAST:event_edtMessageKeyPressed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        genericWebsocket.close();
+    }//GEN-LAST:event_formWindowClosed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea edtChat;

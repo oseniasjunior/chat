@@ -15,5 +15,5 @@ public class ApiUrls {
     public static final String USER = "user/";
     public static final String TOKEN = "get_token/";
     public static final String CHAT = "chat/";
-
+    public static final String CHAT_MESSAGE = "chat_message/";
 }

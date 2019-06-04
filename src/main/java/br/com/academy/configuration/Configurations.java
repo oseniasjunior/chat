@@ -13,6 +13,6 @@ public class Configurations {
 
     public static String API_SERVER = "http://127.0.0.1:9000/";
     public static String API_PATH = "api/chat/";
-    public static String WEBSOCKER_SERVER = "ws://127.0.0.1:8000/";
+    public static String WEBSOCKER_SERVER = "ws://127.0.0.1:9000/";
 
 }

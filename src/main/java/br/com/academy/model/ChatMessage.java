@@ -3,14 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.academy.configuration;
+package br.com.academy.model;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
  * @author ozzy
  */
-public class WebsocketUrls {
+@Getter
+@Setter
+public class ChatMessage extends ModelBase {
 
-    public static String CONVERSATION = "conversation/";
-
+    private String message;
+    private String username;
 }

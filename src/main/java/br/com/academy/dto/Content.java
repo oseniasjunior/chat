@@ -3,14 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.academy.configuration;
+package br.com.academy.dto;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
  * @author ozzy
  */
-public class WebsocketUrls {
+@Getter
+@Setter
+public class Content {
 
-    public static String CONVERSATION = "conversation/";
+    private String username;
+    private String message;
 
 }

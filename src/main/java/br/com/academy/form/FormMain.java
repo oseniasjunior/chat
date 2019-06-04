@@ -23,33 +23,33 @@ import javax.swing.tree.TreePath;
  * @author ozzy
  */
 public class FormMain extends javax.swing.JFrame {
-
+    
     private List<Department> departments;
     private final User loggedUser;
-
+    
     public FormMain(User loggedUser) {
         this.loggedUser = loggedUser;
         initComponents();
         this.populateTree();
     }
-
+    
     private void populateTree() {
         departments = DepartmentRepository.getInstance().list(this.loggedUser.getId());
-
+        
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Departamentos");
         DefaultTreeModel treeModel = new DefaultTreeModel(root);
-
+        
         departments.forEach(d -> {
             DefaultMutableTreeNode departmentsNode = new DefaultMutableTreeNode(d.getName());
             departmentsNode.setUserObject(d);
             root.add(departmentsNode);
-
+            
             d.getUsers().forEach(u -> {
                 DefaultMutableTreeNode usersNode = new DefaultMutableTreeNode(u.getUsername());
                 usersNode.setUserObject(u);
                 departmentsNode.add(usersNode);
             });
-
+            
         });
         jTree1.setModel(treeModel);
         jTree1.setRowHeight(20);
@@ -172,17 +172,19 @@ public class FormMain extends javax.swing.JFrame {
     private void jTree1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTree1MouseClicked
         if (evt.getClickCount() > 1) {
             TreePath selectionPath = jTree1.getSelectionPath();
-
+            
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
             try {
                 User selectedUser = (User) node.getUserObject();
-
+                
                 List<String> users = Arrays.asList(this.loggedUser.getUrl(), selectedUser.getUrl());
-
+                
                 Chat chat = ChatRepository.getInstance().getOrCreate(new CreateChatDTO(users));
-
-                new FormChat().setVisible(true);
-
+                
+                FormChat formChat = new FormChat(chat, this.loggedUser);
+                formChat.setTitle("Conversando com " + selectedUser.getUsername());
+                formChat.setVisible(true);
+                
             } catch (ClassCastException e) {
                 JOptionPane.showMessageDialog(this, "Item não selecionável para um chat");
             }
